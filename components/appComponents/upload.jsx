@@ -1,5 +1,5 @@
 "use client";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import ModalComponent from "./AlertDialog";
 
 const FileUpload = () => {
@@ -29,6 +29,16 @@ const FileUpload = () => {
     fileInput.current.classList.remove(...HoverStyles);
   };
 
+    async  function submitFile  (params)  {
+      let submifFile= await fetch("/api/upload/file",{
+        method:"POST",
+        body:params
+      })
+    }
+  
+  
+    
+  
   const handleDrop = (event) => {
     event.preventDefault();
     event.stopPropagation();
@@ -41,6 +51,11 @@ const FileUpload = () => {
       setFileName(files[0].name);
       setFileType(files[0].type);
       setFileSize((files[0].size / (1024 * 1024)).toFixed(2) + "MB");
+
+let data =new FormData();
+data.append("file",files[0]);
+submitFile(data)
+
     } else {
       setShow(true);
       setCurrentFileName(files[0].name);

@@ -4,10 +4,7 @@ import React, { useRef, useEffect } from 'react';
 const ModalComponent = ({ filename, show, setShow }) => {
   let hidden = useRef();
   
-document.body.addEventListener("dragover", (e) => {
-  e.preventDefault();
-  e.stopPropagation();
-})
+
   const close = () => {
     hidden.current.classList.add("hidden");
     setShow(false); // Hide the modal by updating the show state
