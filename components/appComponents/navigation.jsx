@@ -2,12 +2,24 @@
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect } from "react";
 import { signIn, signOut, useSession } from "next-auth/react";
 import { Button } from "../ui/button";
 
 const Navigation = () => {
-  const { status, data: session } = useSession();
+  const { status, data: session, } = useSession();
+  const use=useSession()
   const image = session?.user?.image;
+  console.log(use)
+  const router = useRouter();
+  const pathname = usePathname();
+
+  useEffect(() => {
+    if (status === "authenticated" && pathname !== "/api/upload") {
+      router.push("/api/upload");
+    }
+  }, [status, pathname, router]);
 
   return (
     <nav className="flex align-center justify-between p-2 ">
@@ -20,6 +32,7 @@ const Navigation = () => {
 
       <div className="lg:flex-[0_0_10%] sm:flex-[0_0_20%] justify-center">
         {status === "authenticated" ? (
+
           <div className="flex ">
             <div className="flex-1">
               <Button

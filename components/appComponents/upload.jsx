@@ -11,7 +11,7 @@ const FileUpload = () => {
   const [fileSize, setFileSize] = useState("");
   const [show, setShow] = useState(false);
   const [currentFileName, setCurrentFileName] = useState("");
-
+const fileInputRef=useRef()
   const handleDragOver = (event) => {
     event.preventDefault();
     event.stopPropagation();
@@ -28,15 +28,34 @@ const FileUpload = () => {
     event.stopPropagation();
     fileInput.current.classList.remove(...HoverStyles);
   };
-
     async  function submitFile  (params)  {
+      try{
+
+      
       let submifFile= await fetch("/api/upload/file",{
         method:"POST",
         body:params
-      })
+      })}catch(err){
+        console.log(err)
+      }
     }
   
-  
+    const processFile=async (files)=>{
+      if (files[0].type === "application/pdf") {
+        setFileName(files[0].name);
+        setFileType(files[0].type);
+        setFileSize((files[0].size / (1024 * 1024)).toFixed(2) + "MB");
+    
+    let data =new FormData();
+    data.append("file",files[0]);
+    submitFile(data)
+    
+      } else {
+        setShow(true);
+        setCurrentFileName(files[0].name);
+      }
+    }
+    
     
   
   const handleDrop = (event) => {
@@ -46,21 +65,18 @@ const FileUpload = () => {
 
     const files = event.dataTransfer.files;
     console.log(files);
-
-    if (files[0].type === "application/pdf") {
-      setFileName(files[0].name);
-      setFileType(files[0].type);
-      setFileSize((files[0].size / (1024 * 1024)).toFixed(2) + "MB");
-
-let data =new FormData();
-data.append("file",files[0]);
-submitFile(data)
-
-    } else {
-      setShow(true);
-      setCurrentFileName(files[0].name);
-    }
+ processFile(files)
+   
   };
+  const chooseFiles=(e)=>{
+   
+const files=fileInputRef.current
+
+  fileInputRef.current.click()
+  files.addEventListener("change",(e)=>{
+    processFile(e.target.files)
+  })
+  }
 
   return (
     <div
@@ -75,22 +91,21 @@ submitFile(data)
       />
       <h2 className="text-white text-lg font-semibold mb-4">Upload Files</h2>
       <div
-        ref={fileInput}
         className="border border-dashed border-gray-600 rounded-[10px] p-7 mb-6"
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
-        onDrop={handleDrop}
+        onDrop={handleDrop} ref={fileInput}
       >
         <div className="flex flex-col items-center">
           <div className="text-gray-400 text-2xl mb-2">+</div>
-          <p className="text-blue-400 mb-1">
-            Drag & drop or click to choose files
-          </p>
+          <button className="text-red-400 mb-1" onClick={chooseFiles}>
+            Drag & drop or click to choose a file
+          </button>
           <p className="text-gray-600 text-sm">Max file size: 10 MB</p>
         </div>
       </div>
       <div>
-        <input type="file" name="file" id="" accept=".pdf" />
+        <input type="file" name="file" id="" accept=".pdf" ref={fileInputRef} className="hidden" />
       </div>
       <div className="bg-gray-100 rounded-[8px] p-4 mb-4 flex items-center justify-between">
         <div className="flex items-center">

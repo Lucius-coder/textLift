@@ -11,7 +11,8 @@ pages: {
   signIn: 'http://localhost:3000/api/upload',
   signOut: 'http://localhost:3000',
 },
-  
+
+
       
  
 };
