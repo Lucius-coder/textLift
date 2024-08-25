@@ -6,7 +6,8 @@ import { usePathname, useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { signIn, signOut, useSession } from "next-auth/react";
 import { Button } from "../ui/button";
-
+import connectToDb from "@/database/connection.mjs";
+import userModel from "@/database/models/user.mjs";
 const Navigation = () => {
   const { status, data: session, } = useSession();
   const use=useSession()
@@ -18,6 +19,8 @@ const Navigation = () => {
   useEffect(() => {
     if (status === "authenticated" && pathname !== "/api/upload") {
       router.push("/api/upload");
+                                               
+
     }
   }, [status, pathname, router]);
 
