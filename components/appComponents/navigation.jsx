@@ -6,8 +6,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { signIn, signOut, useSession } from "next-auth/react";
 import { Button } from "../ui/button";
-import connectToDb from "@/database/connection.mjs";
-import userModel from "@/database/models/user.mjs";
+
 const Navigation = () => {
   const { status, data: session, } = useSession();
   const use=useSession()
@@ -22,6 +21,7 @@ const Navigation = () => {
                                                
 
     }
+   
   }, [status, pathname, router]);
 
   return (

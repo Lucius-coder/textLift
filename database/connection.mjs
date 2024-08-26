@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
-const uri="mongodb://localhost:27017/textLiftDb"
- export default function connectToDb(){
- return  mongoose.connect(uri)
+const uri="mongodb://localhost:27017/textLift"
+ export default async function connectToDb(){
+ await mongoose.connect(uri)
 
 }
 

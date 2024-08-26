@@ -4,7 +4,7 @@ import userModel from "@/database/models/user.mjs";
 export async function POST(req){
 let db=connectToDb()
 const {name,email}=await req.json()
- const createUser=new userModel.create({
+ const createUser=await userModel.create({
     username:name,
     email:email
  })

@@ -2,8 +2,7 @@ import { NextResponse } from "next/server";
 import fs from "fs";
 import path from "path";
 import connectToDb from "@/database/connection.mjs";
-import fileModel from "@/database/models/fileInfo.mjs";
-import userModel from "@/database/models/user.mjs";
+
 // POST request handler for file uploads
 export async function POST(req) {
   try {
@@ -20,7 +19,7 @@ export async function POST(req) {
     const buffer = Buffer.from(await file.arrayBuffer());
 
 const db=await connectToDb()
-const fileInfo=new fileModel({
+const fileInfo=await fileModel.create({
   fileName:file.name,
   fileLink:tempPath,
 })
