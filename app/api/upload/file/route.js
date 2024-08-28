@@ -1,37 +1,62 @@
 import { NextResponse } from "next/server";
 import fs from "fs";
 import path from "path";
-import connectToDb from "@/database/connection.mjs";
+import connectToDb from "@/database/connection";
+
+import fileModel from "@/database/models/fileInfo";
+;
 
 // POST request handler for file uploads
 export async function POST(req) {
   try {
+    // Ensure the database connection is established
+    await connectToDb();
+
+    // Parse the form data from the request
     const data = await req.formData();
     const file = data.get("file"); // Retrieve the file from the form data
+    const email =data.get("email");
 
+    // Check if the file is provided
     if (!file) {
       return NextResponse.json({ error: "No file uploaded" }, { status: 400 });
     }
 
-    const tempPath = path.join(process.cwd(), "public", "upload", file.name);
+    // Define the path to save the file
+    const uploadDir = path.join(process.cwd(), "public", "upload");
+
+    // Ensure the upload directory exists
+    if (!fs.existsSync(uploadDir)) {
+      fs.mkdirSync(uploadDir, { recursive: true });
+    }
+
+    const tempPath = path.join(uploadDir, file.name);
 
     // Convert the file stream to a buffer
     const buffer = Buffer.from(await file.arrayBuffer());
 
-const db=await connectToDb()
-const fileInfo=await fileModel.create({
-  fileName:file.name,
-  fileLink:tempPath,
-})
-    // Save the file to the uploads directory
+    // Save the file to the upload directory
     fs.writeFileSync(tempPath, buffer);
-    console.log(file,tempPath);
+    console.log("File saved:", file, tempPath,email);
+
+    // Save the file information to the database
+    const fileInfoToDB = await fileModel.create({
+      email: email, 
+      fileName: file.name,
+      fileLink: tempPath,
+    });
+
+    // Optionally, process the file (e.g., text-to-audio or read PDF)
+    // await readFile(tempPath);
+    
+
     return NextResponse.json({
       message: "File uploaded successfully",
       fileName: file.name,
+      email:email
     });
   } catch (error) {
-    console.error(error);
+    console.error("File upload error:", error.message);
     return NextResponse.json({ error: "File upload failed" }, { status: 500 });
   }
 }

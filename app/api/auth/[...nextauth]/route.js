@@ -1,7 +1,8 @@
 import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
-import connectToDb from "@/database/connection.mjs";
-import userModel from "@/database/models/user.mjs";
+import insertIntoDatabase from "../../insertIntodb";
+import { signIn } from "next-auth/react";
+
 
 const authOptions = {
   providers: [
@@ -12,23 +13,25 @@ const authOptions = {
         response_type:"code",
         timeout:10000,
         retry:3,
-        access_type:"offline"
+        
       }
     }),
   ],
+  callbacks:{
+    async signIn(user, account, profile) {
+      
+      await insertIntoDatabase(user.name, user.email);
+      return true;
+    }
+  },
   pages: {
     signIn: "http://localhost:3000/api/upload",
     signOut: "http://localhost:3000",
   
   },
-  callbacks: {
-    async signIn({ user, account }) {
   
-        console.log(user.email)
-      
-  },
  debug:true
 }
-}
+
 const handlers = NextAuth(authOptions);
 export { handlers as GET, handlers as POST };

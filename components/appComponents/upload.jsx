@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
 import ModalComponent from "./AlertDialog";
-
+import { useSession } from "next-auth/react";
 const FileUpload = () => {
   let fileInput = useRef();
   const entirePage = useRef();
@@ -11,6 +11,7 @@ const FileUpload = () => {
   const [fileSize, setFileSize] = useState("");
   const [show, setShow] = useState(false);
   const [currentFileName, setCurrentFileName] = useState("");
+let email=useSession().data?.user?.email
 const fileInputRef=useRef()
   const handleDragOver = (event) => {
     event.preventDefault();
@@ -38,7 +39,9 @@ const fileInputRef=useRef()
       })}catch(err){
         console.log(err)
       }
+      
     }
+   
   
     const processFile=async (files)=>{
       if (files[0].type === "application/pdf") {
@@ -48,6 +51,7 @@ const fileInputRef=useRef()
     
     let data =new FormData();
     data.append("file",files[0]);
+    data.append("email",email)
     submitFile(data)
     
       } else {
